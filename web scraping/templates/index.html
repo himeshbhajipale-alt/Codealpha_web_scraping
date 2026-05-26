@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScrapeAnalytics Studio - Web Scraping & Data Analytics Dashboard</title>
+    <!-- Google Fonts Outfit Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for beautiful interactive analytics visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Plotly.js for premium interactive price tracker charts -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="/static/styles.css?v=1.1.1">
+</head>
+<body>
+    <div class="app-container portal-active-generic">
+        <!-- Sidebar Navigation & Control Panel -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <i class="fa-solid fa-spider brand-icon"></i>
+                <div class="brand-text">
+                    <h1>ScrapeAnalytics</h1>
+                    <span>Studio Edition</span>
+                </div>
+            </div>
+
+            <!-- Workspace switcher dropdown -->
+            <div class="sidebar-section portal-switcher-section">
+                <h2><i class="fa-solid fa-cubes section-icon"></i> Workspace Portal</h2>
+                <div class="form-group">
+                    <label for="portal-select">Active Portal</label>
+                    <select id="portal-select" class="portal-select">
+                        <option value="generic" selected>🌐 Generic Web Scraper</option>
+                        <option value="amazon">📦 Amazon Sentiment Reviewer</option>
+                        <option value="amazon_tracker">📉 Amazon Price Tracker</option>
+                        <option value="imdb">🎬 IMDb Movie Dataset Creator</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Portal 1: Generic Scraper Configuration -->
+            <div id="generic-scraper-config" class="sidebar-section">
+                <h2><i class="fa-solid fa-sliders section-icon"></i> 1. Scrape Configuration</h2>
+                <div class="form-group">
+                    <label for="preset-select">Select Dataset Preset</label>
+                    <select id="preset-select">
+                        <option value="" selected>-- Choose a Preset Website --</option>
+                        <!-- Loaded dynamically -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="url-input">Target Website URL</label>
+                    <div class="url-input-wrapper">
+                        <i class="fa-solid fa-globe url-icon"></i>
+                        <input type="text" id="url-input" placeholder="e.g. en.wikipedia.org/wiki/GDP">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Extraction Method</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="extraction-mode" value="table" checked>
+                            <span class="custom-radio"></span>
+                            <i class="fa-solid fa-table"></i> HTML Table
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="extraction-mode" value="selector">
+                            <span class="custom-radio"></span>
+                            <i class="fa-solid fa-code"></i> CSS Selector
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="extraction-mode" value="links">
+                            <span class="custom-radio"></span>
+                            <i class="fa-solid fa-link"></i> Media Assets
+                        </label>
+                    </div>
+                </div>
+
+                <div id="table-params" class="dynamic-param-group">
+                    <div class="form-group">
+                        <label for="table-index-input">Target Table Index</label>
+                        <div class="number-input-wrapper">
+                            <input type="number" id="table-index-input" value="0" min="0" max="50">
+                            <span class="input-hint">First table is 0, second table is 1, etc.</span>
+                        </div>
+                    </div>
+                </div>
+                <div id="selector-params" class="dynamic-param-group hidden">
+                    <div class="form-group">
+                        <label for="selector-input">CSS Selector Path</label>
+                        <div class="text-input-wrapper">
+                            <input type="text" id="selector-input" placeholder="e.g. div.product-card or table.wikitable tr">
+                            <span class="input-hint">Specify tag name, class (.class) or id (#id)</span>
+                        </div>
+                    </div>
+                </div>
+                <button id="run-scraper-btn" class="btn btn-primary btn-block">
+                    <i class="fa-solid fa-circle-play"></i> Run Live Scraper
+                </button>
+            </div>
+
+            <!-- Portal 2: Amazon Sentiment Configuration -->
+            <div id="amazon-scraper-config" class="sidebar-section hidden">
+                <h2><i class="fa-solid fa-sliders section-icon"></i> Amazon Review Scraper</h2>
+                <div class="form-group">
+                    <label for="amazon-url-input">Product / Reviews URL</label>
+                    <div class="url-input-wrapper">
+                        <i class="fa-solid fa-globe url-icon"></i>
+                        <input type="text" id="amazon-url-input" placeholder="e.g. amazon.com/dp/B08N5WRWNW">
+                    </div>
+                    <span class="input-hint">Resolves live review pages headlessly.</span>
+                </div>
+                <div class="form-group">
+                    <label for="amazon-limit-input">Review Scrape Limit</label>
+                    <input type="number" id="amazon-limit-input" value="10" min="5" max="50" step="5">
+                </div>
+                <button id="run-amazon-btn" class="btn btn-primary btn-block">
+                    <i class="fa-solid fa-magnifying-glass-chart"></i> Scrape & Analyze
+                </button>
+            </div>
+
+            <!-- Portal 3: Amazon Price Tracker Setup -->
+            <div id="amazon-tracker-config" class="sidebar-section hidden">
+                <h2><i class="fa-solid fa-sliders section-icon"></i> Price Tracker Setup</h2>
+                <div class="form-group">
+                    <label for="amazon-tracker-url-input">Product Link URL</label>
+                    <div class="url-input-wrapper">
+                        <i class="fa-solid fa-globe url-icon"></i>
+                        <input type="text" id="amazon-tracker-url-input" placeholder="e.g. amazon.com/dp/B08N5WRWNW">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="amazon-tracker-target-price">Target Alert Price ($ or ₹)</label>
+                    <input type="number" id="amazon-tracker-target-price" placeholder="Alert threshold price">
+                </div>
+                <div class="form-group">
+                    <label for="amazon-tracker-email">Email Notification</label>
+                    <input type="email" id="amazon-tracker-email" placeholder="user@gmail.com">
+                </div>
+                <div class="form-group">
+                    <label for="amazon-tracker-telegram">Telegram Chat ID (Optional)</label>
+                    <input type="text" id="amazon-tracker-telegram" placeholder="e.g. 987654321">
+                </div>
+                <button id="add-amazon-tracker-btn" class="btn btn-primary btn-block">
+                    <i class="fa-solid fa-bell"></i> Add Tracker Alert
+                </button>
+
+                <!-- SMTP & Telegram Collapsible Configs -->
+                <div class="collapsible-settings-block" style="margin-top:16px;">
+                    <h3 class="collapsible-header" id="config-toggle" style="font-size:11px; font-weight:700; color:var(--text-secondary); text-transform:uppercase; display:flex; justify-content:space-between; cursor:pointer;">
+                        <span><i class="fa-solid fa-gears"></i> Alert Server Settings</span>
+                        <i class="fa-solid fa-chevron-down toggle-arrow"></i>
+                    </h3>
+                    <div id="config-fields" class="collapsible-content hidden" style="margin-top:10px;">
+                        <h4 class="setting-title">SMTP Mail Account</h4>
+                        <div class="form-group">
+                            <input type="text" id="smtp-host" placeholder="smtp.gmail.com" value="smtp.gmail.com" style="margin-bottom:6px;">
+                            <input type="number" id="smtp-port" placeholder="587" value="587" style="margin-bottom:6px;">
+                            <input type="text" id="smtp-user" placeholder="yourmail@gmail.com" style="margin-bottom:6px;">
+                            <input type="password" id="smtp-pass" placeholder="App Password" style="margin-bottom:6px;">
+                            <button id="save-smtp-btn" class="btn btn-secondary btn-block btn-sm"><i class="fa-solid fa-save"></i> Save SMTP</button>
+                        </div>
+                        <h4 class="setting-title" style="margin-top:12px;">Telegram Bot Settings</h4>
+                        <div class="form-group">
+                            <input type="password" id="tele-token" placeholder="Bot Token ID" style="margin-bottom:6px;">
+                            <button id="save-tele-btn" class="btn btn-secondary btn-block btn-sm"><i class="fa-solid fa-save"></i> Save Token</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Portal 3 Subview: Tracked Items sidebar list -->
+            <div id="amazon-tracker-products-sidebar-section" class="sidebar-section hidden">
+                <h2><i class="fa-solid fa-list-check section-icon"></i> Tracked Items</h2>
+                <div id="amazon-tracked-products-list" class="tracked-products-list">
+                    <p class="light-text text-center">No products tracked yet.</p>
+                </div>
+            </div>
+
+            <!-- Portal 4: IMDb Creator Configuration -->
+            <div id="imdb-creator-config" class="sidebar-section hidden">
+                <h2><i class="fa-solid fa-sliders section-icon"></i> IMDb Movie Config</h2>
+                <div class="form-group">
+                    <label for="imdb-limit-input">Movie Count Limit</label>
+                    <select id="imdb-limit-input">
+                        <option value="10">Top 10 Movies</option>
+                        <option value="15" selected>Top 15 Movies</option>
+                        <option value="20">Top 20 Movies</option>
+                        <option value="30">Top 30 Movies</option>
+                    </select>
+                </div>
+                <button id="run-imdb-btn" class="btn btn-primary btn-block">
+                    <i class="fa-solid fa-film"></i> Scrape IMDb Dataset
+                </button>
+            </div>
+
+            <!-- Data Cleaning Sandbox -->
+            <div id="cleaning-sandbox" class="sidebar-section">
+                <h2><i class="fa-solid fa-wand-magic-sparkles section-icon"></i> 2. Data Cleaning Sandbox</h2>
+                <div class="form-group">
+                    <label>Keep Columns</label>
+                    <div id="column-checkboxes" class="checkbox-scroll-box">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="filter-text-input">Row Filter Keyword</label>
+                    <div class="search-input-wrapper">
+                        <i class="fa-solid fa-filter filter-icon"></i>
+                        <input type="text" id="filter-text-input" placeholder="Only keep rows containing text...">
+                    </div>
+                </div>
+                <div class="form-group toggle-group">
+                    <label class="switch-label">
+                        <input type="checkbox" id="drop-empty-switch" checked>
+                        <span class="slider round"></span>
+                        Drop Rows with Empty Fields
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label for="rename-cols-area">Rename Columns</label>
+                    <textarea id="rename-cols-area" placeholder="OldCol=NewCol (One pair per line)"></textarea>
+                </div>
+                <div class="btn-group">
+                    <button id="apply-clean-btn" class="btn btn-secondary"><i class="fa-solid fa-check"></i> Apply</button>
+                    <button id="reset-clean-btn" class="btn btn-text"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Display Content Area -->
+        <main class="main-content">
+            <!-- Top Status Bar -->
+            <header class="top-bar">
+                <div class="page-title">
+                    <h2>Scraping Workspace Dashboard</h2>
+                    <p id="active-dataset-name">No active dataset loaded. Configure scraper to begin.</p>
+                </div>
+                <div class="status-indicator-badge info-badge" id="status-badge">
+                    <span class="pulse-dot grey"></span>
+                    <span id="status-badge-text">Idle</span>
+                </div>
+            </header>
+
+            <!-- Loading Spinner State -->
+            <div id="loading-overlay" class="loading-overlay hidden">
+                <div class="spinner-container">
+                    <div class="double-bounce1"></div>
+                    <div class="double-bounce2"></div>
+                    <p>Scraping web components, executing headless browser operations, compiling DataFrame...</p>
+                </div>
+            </div>
+
+            <!-- Error Notification Banner -->
+            <div id="error-banner" class="alert-banner error-banner hidden">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <div class="banner-content">
+                    <h3>Scraping Failed</h3>
+                    <p id="error-banner-text">Error message details.</p>
+                </div>
+                <button class="close-banner-btn" onclick="document.getElementById('error-banner').classList.add('hidden')">&times;</button>
+            </div>
+
+            <!-- Dashboard Statistics Panels -->
+            <section class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon-wrapper blue">
+                        <i class="fa-solid fa-grip-lines"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-label">Total Rows Scraped</span>
+                        <h3 id="stat-total-rows">0</h3>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon-wrapper green">
+                        <i class="fa-solid fa-columns"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-label">Columns Identified</span>
+                        <h3 id="stat-total-cols">0</h3>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon-wrapper purple">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-label">Engine Connection</span>
+                        <h3 id="stat-data-source">None</h3>
+                    </div>
+                </div>
+                <!-- Next refresh countdown card specifically visible for amazon price tracker portal -->
+                <div class="stat-card" id="scan-countdown-card" style="display:none;">
+                    <div class="stat-icon-wrapper orange">
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-label">Next Background Scan</span>
+                        <h3 id="stat-next-scan">3m 0s</h3>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results View Area with Tabs -->
+            <section class="workspace-tabs-container">
+                <div class="tabs-header">
+                    <button class="tab-btn active" data-tab="tab-grid">
+                        <i class="fa-solid fa-table-list"></i> Scraped Data Grid
+                    </button>
+                    <button class="tab-btn" data-tab="tab-analytics" id="tab-btn-analytics">
+                        <i class="fa-solid fa-chart-column"></i> Data Analytics & Visuals
+                    </button>
+                    <button class="tab-btn" data-tab="tab-automation">
+                        <i class="fa-solid fa-terminal"></i> BeautifulSoup Code View
+                    </button>
+                    <button class="tab-btn" data-tab="tab-export">
+                        <i class="fa-solid fa-cloud-arrow-down"></i> Export Dataset
+                    </button>
+                </div>
+
+                <div class="tabs-body">
+                    <!-- Tab 1: Grid View Tab -->
+                    <div class="tab-content active" id="tab-grid">
+                        <div class="table-actions">
+                            <span class="results-meta-text" id="grid-meta-text">Showing 0 of 0 rows.</span>
+                            <div class="grid-controls">
+                                <button id="sort-reset-btn" class="btn btn-sm btn-text hidden"><i class="fa-solid fa-arrow-rotate-left"></i> Reset Sort</button>
+                            </div>
+                        </div>
+                        <div class="table-scroll-container">
+                            <table class="data-table" id="output-data-table">
+                                <thead>
+                                    <!-- Loaded dynamically -->
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="100%" class="empty-table-placeholder">
+                                            <i class="fa-solid fa-folder-open"></i>
+                                            <p>No scraped data to display yet. Choose a preset or input a URL to pull datasets from websites.</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Tab 2: Analytics Tab -->
+                    <div class="tab-content" id="tab-analytics">
+                        <!-- Portal 1: Generic Scraper Analytics -->
+                        <div class="analytics-view-generic analytics-layout">
+                            <div class="analytics-controls">
+                                <h3>Configure Analytical Visualization</h3>
+                                <div class="form-group">
+                                    <label for="chart-col-select">Target Column for X-Axis / Grouping</label>
+                                    <select id="chart-col-select">
+                                        <!-- Loaded dynamically -->
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="chart-value-select">Target Value Column (Numeric / Count)</label>
+                                    <select id="chart-value-select">
+                                        <!-- Loaded dynamically -->
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Chart Representation</label>
+                                    <div class="chart-type-selector">
+                                        <button class="chart-type-btn active" data-type="bar">
+                                            <i class="fa-solid fa-chart-bar"></i> Bar Chart
+                                        </button>
+                                        <button class="chart-type-btn" data-type="line">
+                                            <i class="fa-solid fa-chart-line"></i> Line Chart
+                                        </button>
+                                        <button class="chart-type-btn" data-type="pie">
+                                            <i class="fa-solid fa-chart-pie"></i> Pie Chart
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="analytics-metrics-panel">
+                                    <h4>Descriptive Statistics Summary</h4>
+                                    <div id="stats-summary-table-container">
+                                        <p class="light-text">Select a numeric column to view details.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="analytics-visuals">
+                                <div class="chart-card">
+                                    <canvas id="analytics-canvas"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Portal 2: Amazon Sentiment Analytics -->
+                        <div class="analytics-view-amazon analytics-layout hidden">
+                            <div class="analytics-controls">
+                                <h3>Sentiment Analytics Summary</h3>
+                                <h3 id="amazon-product-name-title" class="product-title-header" style="margin-bottom:15px; font-weight:600; font-size:1.1rem; color:var(--text-primary);"></h3>
+                                <div class="amazon-metrics-panel">
+                                    <div class="amazon-metric-card">
+                                        <span class="metric-label">Average Rating</span>
+                                        <div class="metric-big-flex">
+                                            <h4 id="amazon-avg-rating">0.0</h4>
+                                            <span class="stars-sub">/ 5.0</span>
+                                        </div>
+                                    </div>
+                                    <div class="amazon-metric-card">
+                                        <span class="metric-label">Positive Sentiment Ratio</span>
+                                        <h4 id="amazon-pos-ratio">0%</h4>
+                                    </div>
+                                    <div class="sentiment-breakdown">
+                                        <div class="breakdown-row positive">
+                                            <span class="label"><i class="fa-solid fa-face-smile"></i> Positive</span>
+                                            <span class="value" id="amazon-pos-count">0</span>
+                                        </div>
+                                        <div class="breakdown-row neutral">
+                                            <span class="label"><i class="fa-solid fa-face-meh"></i> Neutral</span>
+                                            <span class="value" id="amazon-neu-count">0</span>
+                                        </div>
+                                        <div class="breakdown-row negative">
+                                            <span class="label"><i class="fa-solid fa-face-frown"></i> Negative</span>
+                                            <span class="value" id="amazon-neg-count">0</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="analytics-visuals" style="height:auto; justify-content:flex-start; gap:20px;">
+                                <div class="chart-card" style="height: 250px;">
+                                    <canvas id="amazon-sentiment-chart"></canvas>
+                                </div>
+                                <div class="word-cloud-card">
+                                    <h3>Reviews Word Cloud (Click to Filter Data Grid)</h3>
+                                    <div id="amazon-word-cloud" class="word-cloud-container">
+                                        <p class="light-text">Analyze reviews to load word cloud...</p>
+                                    </div>
+                                    <button id="clear-word-filter-btn" class="btn btn-sm btn-secondary hidden" style="margin-top:10px;">
+                                        <i class="fa-solid fa-filter-circle-xmark"></i> Clear Word Filter
+                                    </button>
+                                </div>
+                                <div class="reviews-table-card" style="max-height: 280px; overflow-y:auto; border: 1px solid var(--border-color); border-radius:var(--border-radius-md);">
+                                    <h3 style="padding:16px 16px 8px 16px; font-size:14px;">Reviewer Details</h3>
+                                    <table id="amazon-reviews-table" class="data-table">
+                                        <thead>
+                                            <tr id="amazon-reviews-headers"></tr>
+                                        </thead>
+                                        <tbody id="amazon-reviews-rows"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Portal 3: Amazon Price Tracker Analytics -->
+                        <div class="analytics-view-amazon-tracker analytics-layout hidden" style="max-height: none;">
+                            <div class="analytics-controls">
+                                <h3>Amazon Price Tracker Dashboard</h3>
+                                <div class="form-group">
+                                    <label for="amazon-tracker-select-product">Select Product to Plot</label>
+                                    <select id="amazon-tracker-select-product">
+                                        <!-- Loaded dynamically -->
+                                    </select>
+                                </div>
+                                
+                                <div id="amazon-tracker-details-panel" class="product-detail-card hidden" style="margin-top:16px;">
+                                    <div class="product-image-container">
+                                        <img id="ap-detail-img" src="" alt="Product Image" style="max-width:100%; max-height:120px; object-fit:contain;">
+                                    </div>
+                                    <h4 id="ap-detail-name" style="font-size:13px; font-weight:600; margin-top:8px;">Product Name</h4>
+                                    <div class="price-details-grid" style="margin-top:10px;">
+                                        <p>Current Price: <strong id="ap-detail-curr" class="text-success">$0.00</strong></p>
+                                        <p>Original Price: <span id="ap-detail-orig" class="text-muted text-line-through">$0.00</span></p>
+                                        <p>Alert Target: <strong id="ap-detail-thresh">$0.00</strong></p>
+                                        <p>Discount: <strong id="ap-detail-disc" class="text-accent">0%</strong></p>
+                                        <p>Alert Status: <strong id="ap-detail-status-badge">ACTIVE</strong></p>
+                                    </div>
+                                    <button id="trigger-amazon-drop-simulation-btn" class="btn btn-primary btn-block btn-sm" style="margin-top:12px;">
+                                        <i class="fa-solid fa-bolt"></i> Simulate Price Drop Alert
+                                    </button>
+                                    <button id="btn-delete-tracker-alert" class="btn btn-secondary btn-block btn-sm" style="margin-top:8px;">
+                                        <i class="fa-solid fa-trash"></i> Delete Tracker
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="analytics-visuals" style="height:auto; justify-content:flex-start; gap:20px;">
+                                <div class="chart-card" style="height: 320px;">
+                                    <div id="plotly-price-chart" style="width: 100%; height: 280px;"></div>
+                                </div>
+                                <div class="chart-card" style="max-height: 180px; overflow-y:auto; padding:12px;">
+                                    <h3 style="font-size:13px; margin-bottom:8px;">Price History points</h3>
+                                    <table class="data-table" id="tracker-history-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Timestamp</th>
+                                                <th>Price</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tracker-history-body"></tbody>
+                                    </table>
+                                </div>
+                                <div class="console-log-card" style="margin-top:0;">
+                                    <h3><i class="fa-solid fa-terminal"></i> Price Alerts Notification Drop Console</h3>
+                                    <div id="amazon-tracker-console-terminal" class="console-terminal" style="height:120px;">
+                                        <div class="terminal-line system">[SYSTEM INITIALIZED] Amazon Price Drop Webhook listener standing by...</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Portal 4: IMDb Dataset Analytics -->
+                        <div class="analytics-view-imdb analytics-layout hidden">
+                            <div class="analytics-controls">
+                                <h3>Rating Regression Predictor</h3>
+                                <div class="form-group">
+                                    <label for="pred-genre">Genre</label>
+                                    <select id="pred-genre">
+                                        <option value="Drama">Drama</option>
+                                        <option value="Action">Action</option>
+                                        <option value="Crime">Crime</option>
+                                        <option value="Adventure">Adventure</option>
+                                        <option value="Sci-Fi">Sci-Fi</option>
+                                        <option value="Biography">Biography</option>
+                                        <option value="Comedy">Comedy</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="pred-director">Director Name</label>
+                                    <input type="text" id="pred-director" placeholder="e.g. Christopher Nolan" value="Christopher Nolan">
+                                </div>
+                                <div class="form-group">
+                                    <label for="pred-year">Release Year</label>
+                                    <input type="number" id="pred-year" placeholder="e.g. 2026" value="2026" min="1880" max="2030">
+                                </div>
+                                <button id="predict-rating-btn" class="btn btn-primary btn-block btn-sm">
+                                    <i class="fa-solid fa-calculator"></i> Run Predictor Model
+                                </button>
+                                <div id="prediction-result-card" class="prediction-result-card hidden">
+                                    <h4>Predicted IMDb Score</h4>
+                                    <div class="pred-score-big" id="pred-score-text">0.0</div>
+                                    <p id="pred-explanation-text">Explanation text here...</p>
+                                </div>
+                            </div>
+                            <div class="analytics-visuals" style="height:auto; justify-content:flex-start; gap:20px;">
+                                <div class="chart-card" style="height:250px;">
+                                    <canvas id="imdb-genre-chart"></canvas>
+                                </div>
+                                <div class="recommendations-card">
+                                    <h3><i class="fa-solid fa-circle-nodes"></i> Movie Recommendation Engine</h3>
+                                    <p class="card-subtitle">Click any movie row in the Data Grid tab to find similar recommendations.</p>
+                                    <div id="imdb-recommendations-list" class="recommendations-list">
+                                        <p class="light-text">No movie selected. Click a movie row in the data grid to trigger recommendations.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab 3: Automation View Tab -->
+                    <div class="tab-content" id="tab-automation">
+                        <div class="code-viewer-header">
+                            <span><i class="fa-brands fa-python"></i> bs4_scraper.py</span>
+                            <button id="copy-code-btn" class="btn btn-sm btn-secondary">
+                                <i class="fa-solid fa-copy"></i> Copy Script Code
+                            </button>
+                        </div>
+                        <div class="code-viewport">
+                            <pre><code id="python-code-box"># Code will populate here once a scrape operation is completed.</code></pre>
+                        </div>
+                    </div>
+
+                    <!-- Tab 4: Export Tab -->
+                    <div class="tab-content" id="tab-export">
+                        <div class="export-center">
+                            <div class="export-card">
+                                <i class="fa-solid fa-file-csv csv-color"></i>
+                                <h3>CSV Dataset Format</h3>
+                                <p>Standard Comma-Separated Values file format. Suitable for Excel, Pandas, and database inputs.</p>
+                                <button id="download-csv-btn" class="btn btn-primary"><i class="fa-solid fa-download"></i> Download CSV File</button>
+                            </div>
+                            <div class="export-card">
+                                <i class="fa-solid fa-file-excel excel-color"></i>
+                                <h3>Excel Spreadsheet Format</h3>
+                                <p>Microsoft Excel Workbook (.xlsx) format. Ideal for calculations, charts, and styling.</p>
+                                <button id="download-excel-btn" class="btn btn-primary"><i class="fa-solid fa-download"></i> Download Excel File</button>
+                            </div>
+                            <div class="export-card">
+                                <i class="fa-solid fa-file-code json-color"></i>
+                                <h3>JSON Dataset Format</h3>
+                                <p>JavaScript Object Notation structured data file. Best suited for Web Apps and APIs.</p>
+                                <button id="download-json-btn" class="btn btn-primary"><i class="fa-solid fa-download"></i> Download JSON File</button>
+                            </div>
+                            <div class="export-card">
+                                <i class="fa-solid fa-database db-color"></i>
+                                <h3>SQLite Database Format</h3>
+                                <p>Standalone SQLite database file (.db) containing a table with the current columns structure.</p>
+                                <button id="download-db-btn" class="btn btn-primary"><i class="fa-solid fa-download"></i> Download Database File</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <!-- Script loading -->
+    <script src="/static/app.js?v=1.1.1"></script>
+</body>
+</html>

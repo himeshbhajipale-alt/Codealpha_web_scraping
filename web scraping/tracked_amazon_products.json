@@ -1,0 +1,153 @@
+{
+    "products": [
+        {
+            "name": "Amazon Scraped Product",
+            "url": "https://www.amazon.com/dp/B08N5WRWNW",
+            "current_price": 658.0,
+            "original_price": 999.0,
+            "discount": "34%",
+            "currency": "$",
+            "rating": "4.5",
+            "target_price": 700.0,
+            "email": "test-alerts-amazon@gmail.com",
+            "telegram_chat_id": "987654321",
+            "price_history": [
+                {
+                    "date": "2026-05-18",
+                    "price": 878.9
+                },
+                {
+                    "date": "2026-05-19",
+                    "price": 862.92
+                },
+                {
+                    "date": "2026-05-20",
+                    "price": 846.94
+                },
+                {
+                    "date": "2026-05-21",
+                    "price": 830.96
+                },
+                {
+                    "date": "2026-05-22",
+                    "price": 814.98
+                },
+                {
+                    "date": "2026-05-23",
+                    "price": 799.0
+                },
+                {
+                    "date": "2026-05-23",
+                    "price": 658.0
+                },
+                {
+                    "date": "2026-05-23",
+                    "price": 658.0
+                },
+                {
+                    "date": "2026-05-23",
+                    "price": 658.0
+                },
+                {
+                    "date": "2026-05-23",
+                    "price": 658.0
+                },
+                {
+                    "date": "2026-05-23",
+                    "price": 658.0
+                },
+                {
+                    "date": "2026-05-23",
+                    "price": 658.0
+                },
+                {
+                    "date": "2026-05-23",
+                    "price": 658.0
+                },
+                {
+                    "date": "2026-05-23",
+                    "price": 658.0
+                }
+            ],
+            "alert_status": "TRIGGERED"
+        },
+        {
+            "name": "Redmi 15 Midnight Segments Snapdragon",
+            "url": "https://www.amazon.in/Redmi-15-Midnight-Segments-Snapdragon/dp/B0FJFSHJ6Z/?_encoding=UTF8&pd_rd_w=fmT1j&content-id=amzn1.sym.7998c9a0-d63d-4775-a557-86e41b560555&pf_rd_p=7998c9a0-d63d-4775-a557-86e41b560555&pf_rd_r=VKNHE9BC1KYJSN6PK8WB&pd_rd_wg=DcDwV&pd_rd_r=bd9aa046-8580-4c10-bad2-a8dbca4329f5&ref_=pd_hp_d_atf_dealz_cs&th=1",
+            "current_price": 4999,
+            "original_price": 5999,
+            "discount": "17%",
+            "currency": "\u20b9",
+            "rating": "4.5",
+            "target_price": 6999.0,
+            "email": "",
+            "telegram_chat_id": "",
+            "price_history": [
+                {
+                    "date": "2026-05-18",
+                    "price": 5498.9
+                },
+                {
+                    "date": "2026-05-19",
+                    "price": 5398.92
+                },
+                {
+                    "date": "2026-05-20",
+                    "price": 5298.94
+                },
+                {
+                    "date": "2026-05-21",
+                    "price": 5198.96
+                },
+                {
+                    "date": "2026-05-22",
+                    "price": 5098.98
+                },
+                {
+                    "date": "2026-05-23",
+                    "price": 4999
+                }
+            ],
+            "alert_status": "ACTIVE"
+        },
+        {
+            "name": "200Masterpixel Dimensity 7400 Ultra Crystalres Charging",
+            "url": "https://www.amazon.in/200MasterPixel-Dimensity-7400-Ultra-CrystalRes-Charging/dp/B0GF22T5WM/ref=sr_1_1_sspa?crid=2VNRI9ENVW0V3&dib=eyJ2IjoiMSJ9.sYIXWpmu2rZIPUcCz5V0FK8bbSi11FjxQkX2WKoVjzBmx5Jaw6qjbWg3IPvs9G7EbYMNEym-qUZC-g33tYpotSrRUkeGHJpCxWri67OI2COuWmR1H-Pp7z49BO9Ni8BDfV-zNKQrxHXmQHcg0co0nTcGmf6hV5wrNUP6O93x2n_hJuFmzx7bY4N6bpVW_VFO-Zm8XnHU1frIAsx9frLhSLq_B5ZE4Cw3vaevRNz9UvI.YtyZgAFETSWZRnTdw75l9fZbbyg40aX1-wu7P35JPP8&dib_tag=se&keywords=redmi%2Bnote%2B15%2Bpro%2B5g&qid=1779521743&sprefix=redmi%2B%2Caps%2C342&sr=8-1-spons&aref=ySnbgwooAP&sp_csd=d2lkZ2V0TmFtZT1zcF9hdGY&th=1",
+            "current_price": 4999,
+            "original_price": 5999,
+            "discount": "17%",
+            "currency": "\u20b9",
+            "rating": "4.5",
+            "target_price": 20999.0,
+            "email": "",
+            "telegram_chat_id": "",
+            "price_history": [
+                {
+                    "date": "2026-05-18",
+                    "price": 5498.9
+                },
+                {
+                    "date": "2026-05-19",
+                    "price": 5398.92
+                },
+                {
+                    "date": "2026-05-20",
+                    "price": 5298.94
+                },
+                {
+                    "date": "2026-05-21",
+                    "price": 5198.96
+                },
+                {
+                    "date": "2026-05-22",
+                    "price": 5098.98
+                },
+                {
+                    "date": "2026-05-23",
+                    "price": 4999
+                }
+            ],
+            "alert_status": "ACTIVE"
+        }
+    ]
+}
